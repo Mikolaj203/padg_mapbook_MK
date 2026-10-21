@@ -18,7 +18,7 @@ while True:
     if choose == '2': add_user(users)
     if choose == '3': remove_user(users)
     if choose == '4': update_user(users)
-    if choose == '6': get_map(users)
+    if choose == '5': get_map(users)
 
 
 #show_users(users)
