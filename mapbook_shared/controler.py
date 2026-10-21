@@ -4,4 +4,27 @@ def show_users(user_list:list)->None:
 
 
 def add_user(user_list:list)->None:
-    user_list.append({'name':input('Podaj imie: '), 'location':input('Podaj miejscowość: '), 'posts':int(input('Podaj liczbę postów:'))})
+    user_list.append({'name':input('Podaj imie: '), 'location':input('Podaj miejscowość: '), 'posts':int(input('Podaj liczbę postów: '))})
+
+
+
+
+def remove_user(user_list:list)->None:
+    name_of_user_to_remove: str = input('Podaj imie użutkownika do usunięcia: ')
+
+    for user in user_list:
+        if user['name'] == name_of_user_to_remove:
+            user_list.remove({'name': 'Emil', 'location': 'Łomża', 'posts': 50})
+
+def update_user(user_list:list)->None:
+    name_of_user_to_update: str = input('Podaj imie użutkownika do edycji: ')
+
+    for user in user_list:
+        if user['name'] == name_of_user_to_update:
+            user['name'] = input('Podaj nowe imie użytkownika: ')
+            user['location'] = input('Podaj nową lokalizacje użytkownika: ')
+            user['posts'] = int(input('Podaj liczbę postów: '))
+
+
+
+
