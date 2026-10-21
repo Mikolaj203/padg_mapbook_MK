@@ -47,7 +47,8 @@ def get_map(user_list:list)->None:
 
     m = folium.Map(location=(52.23, 21.00), zoom_start=6)
 
-    for user in users:
+    for user in user_list:
+        print(get_coordinates(user['location']))
         folium.Marker(
             location=get_coordinates(user['location']),
             tooltip="Click me!",
