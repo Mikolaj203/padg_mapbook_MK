@@ -1,5 +1,5 @@
 users:list = [
-    {'name': 'Emil', 'location': 'Łomża', 'posts':50},
+    {'name': 'Mikołaj', 'location': 'Warszawa', 'posts':1},
     {'name': 'Bartosz K', 'location': 'Narol', 'posts':123},
     {'name': 'Bartosz W', 'location': 'Wierszczyca', 'posts': 25},
     {'name': 'Natalia', 'location': 'Białystok', 'posts': 10},
