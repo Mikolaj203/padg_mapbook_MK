@@ -5,9 +5,3 @@ users:list = [
     {'name': 'Natalia', 'location': 'Białystok', 'posts': 10},
     {'name': 'Emil', 'location': 'Łomża', 'posts': 6}
 
-]
-#todo w tym miejscu ma zostac commitami dodany przez zaproszonych uzytkownikow wpis przez kazdego z nich
-
-if __name__ == '__main__':
-
-    print(users)
