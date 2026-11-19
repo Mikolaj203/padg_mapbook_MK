@@ -5,16 +5,25 @@ from mapbook_shared.controler import get_coordinates
 users: list = []
 
 
+class User:
+    def __init__(self, name, posts, location):
+        self.name: str = name
+        self.posts: int = posts
+        self.location: str = location
+
+        self.coords: list = get_coordinates(location)
+        self.marker= map_widget.set_marker(self.coords[0], self.coords[1])
+
+
 def add_user():
     name = entry_imie.get()
     posts = entry_posty.get()
     location = entry_miejscowosc.get()
-    x, y = get_coordinates(location)
+
 
     users.append(
-        {'name': name, 'posts': posts, 'location': location, 'marker': map_widget.set_marker(x, y, text=name), 'x': x,
-         'y': y
-         })
+        User(name, posts, location)
+    )
     print('to jest lista', users)
 
     entry_imie.delete(0, END)
@@ -28,22 +37,22 @@ def add_user():
 def show_users():
     listbox_lista_obiektow.delete(0, END)
     for idx, user in enumerate(users):
-        listbox_lista_obiektow.insert(idx, user['name'])
+        listbox_lista_obiektow.insert(idx, user.name)
 
 
 def remove_user():
     i = listbox_lista_obiektow.index(ACTIVE)
     print(i)
-    users[i]['marker'].delete()
+    users[i].marker.delete()
     users.pop(i)
     show_users()
 
 
 def edit_user():
     i = listbox_lista_obiektow.index(ACTIVE)
-    entry_imie.insert(0, users[i]['name'])
-    entry_miejscowosc.insert(0, users[i]['location'])
-    entry_posty.insert(0, users[i]['posts'])
+    entry_imie.insert(0, users[i].name)
+    entry_miejscowosc.insert(0, users[i].location)
+    entry_posty.insert(0, users[i].posts)
 
     Button_dodaj_obiekt.config(text="zapisz zmiany", command=lambda: update_user(i))
 
@@ -52,12 +61,12 @@ def update_user(i):
     new_name = entry_imie.get()
     new_location = entry_miejscowosc.get()
     new_posts = entry_posty.get()
-    users[i]['name'] = new_name
-    users[i]['location'] = new_location
-    users[i]['posts'] = new_posts
-    x, y = get_coordinates(new_location)
-    users[i]['marker'].delete()
-    users[i]['marker'] = map_widget.set_marker(x, y, text=entry_imie.get())
+    users[i].name = new_name
+    users[i].location = new_location
+    users[i].posts = new_posts
+    users[i].coords = get_coordinates(new_location)
+    users[i].marker.delete()
+    users[i].marker = map_widget.set_marker(users[i].coords[0], users[i].coords[1], text=entry_imie.get())
 
     show_users()
     Button_dodaj_obiekt.config(text='dodaj obiekt', command=add_user)
@@ -69,14 +78,14 @@ def update_user(i):
 
 def show_user_details():
     i = listbox_lista_obiektow.index(ACTIVE)
-    tmp_user = users[i]['name']
-    tmp_posts = users[i]['posts']
-    tmp_location = users[i]['location']
+    tmp_user = users[i].name
+    tmp_posts = users[i].posts
+    tmp_location = users[i].location
     label_imie_szczegoly_obiektu_wartosc.config(text=tmp_user)
     label_posty_szczegoly_obiektu_wartosc.config(text=tmp_posts)
     label_miejscowosc_szczegoly_obiektu_wartosc.config(text=tmp_location)
 
-    map_widget.set_position(users[i]['x'], users[i]['y'])
+    map_widget.set_position(users[i].coords[0], users[i].coords[1])
     map_widget.set_zoom(11)
 
 
