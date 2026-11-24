@@ -1,27 +1,167 @@
-from mapbook_shared.model import users
-from mapbook_shared.controler import show_users, add_user, remove_user, update_user, get_map
+from tkinter import *
+import tkintermapview
+from mapbook_shared.controler import get_coordinates
+
+users: list = []
 
 
+class User:
+    def __init__(self, name, posts, location):
+        self.name: str = name
+        self.posts: int = posts
+        self.location: str = location
+
+        self.coords: list = get_coordinates(location)
+        self.marker= map_widget.set_marker(self.coords[0], self.coords[1])
 
 
-while True:
-    print('===========MENU============')
-    print('0. Exit')
-    print('1. Show users')
-    print('2. Add user')
-    print('3. Remove user')
-    print('4. Update user')
-    print('5. Show map')
-    choose: str=input('Wybierz opcje menu: ')
-    if choose == '0': break
-    if choose == '1': show_users(users)
-    if choose == '2': add_user(users)
-    if choose == '3': remove_user(users)
-    if choose == '4': update_user(users)
-    if choose == '5': get_map(users)
+def add_user():
+    name = entry_imie.get()
+    posts = entry_posty.get()
+    location = entry_miejscowosc.get()
 
 
-#show_users(users)
-#add_user(users)
+    users.append(
+        User(name, posts, location)
+    )
+    print('to jest lista', users)
 
-#show_users(users)
+    entry_imie.delete(0, END)
+    entry_posty.delete(0, END)
+    entry_miejscowosc.delete(0, END)
+
+    entry_imie.focus()
+    show_users()
+
+
+def show_users():
+    listbox_lista_obiektow.delete(0, END)
+    for idx, user in enumerate(users):
+        listbox_lista_obiektow.insert(idx, user.name)
+
+
+def remove_user():
+    i = listbox_lista_obiektow.index(ACTIVE)
+    print(i)
+    users[i].marker.delete()
+    users.pop(i)
+    show_users()
+
+
+def edit_user():
+    i = listbox_lista_obiektow.index(ACTIVE)
+    entry_imie.insert(0, users[i].name)
+    entry_miejscowosc.insert(0, users[i].location)
+    entry_posty.insert(0, users[i].posts)
+
+    Button_dodaj_obiekt.config(text="zapisz zmiany", command=lambda: update_user(i))
+
+
+def update_user(i):
+    new_name = entry_imie.get()
+    new_location = entry_miejscowosc.get()
+    new_posts = entry_posty.get()
+    users[i].name = new_name
+    users[i].location = new_location
+    users[i].posts = new_posts
+    users[i].coords = get_coordinates(new_location)
+    users[i].marker.delete()
+    users[i].marker = map_widget.set_marker(users[i].coords[0], users[i].coords[1], text=entry_imie.get())
+
+    show_users()
+    Button_dodaj_obiekt.config(text='dodaj obiekt', command=add_user)
+    entry_imie.delete(0, END)
+    entry_posty.delete(0, END)
+    entry_miejscowosc.delete(0, END)
+    entry_imie.focus()
+
+
+def show_user_details():
+    i = listbox_lista_obiektow.index(ACTIVE)
+    tmp_user = users[i].name
+    tmp_posts = users[i].posts
+    tmp_location = users[i].location
+    label_imie_szczegoly_obiektu_wartosc.config(text=tmp_user)
+    label_posty_szczegoly_obiektu_wartosc.config(text=tmp_posts)
+    label_miejscowosc_szczegoly_obiektu_wartosc.config(text=tmp_location)
+
+    map_widget.set_position(users[i].coords[0], users[i].coords[1])
+    map_widget.set_zoom(11)
+
+
+root = Tk()
+root.geometry('1024x768')
+root.title('Mapbook')
+
+# RAMKI
+ramka_lista_obiektow = Frame(root)
+ramka_formularz = Frame(root)
+ramka_szczegoly_obiektu = Frame(root)
+ramka_mapa = Frame(root)
+
+ramka_lista_obiektow.grid(row=0, column=0, padx=50)
+ramka_formularz.grid(row=0, column=1)
+ramka_szczegoly_obiektu.grid(row=1, column=0, columnspan=2, padx=50, pady=20)
+ramka_mapa.grid(row=2, column=0, columnspan=7)
+
+# RAMKA LISTA OBIEKTÓW
+label_lista_obiektow = Label(ramka_lista_obiektow, text='Lista obiektów: ')
+listbox_lista_obiektow = Listbox(ramka_lista_obiektow)
+
+Button_pokaz_szczegoly = Button(ramka_lista_obiektow, text='Pokaz szczegóły', command=show_user_details)
+Button_edytuj_obiekt = Button(ramka_lista_obiektow, text='Edytuj obiekt', command=edit_user)
+Button_usun_obiekt = Button(ramka_lista_obiektow, text='Usuń obiekt', command=remove_user)
+
+label_lista_obiektow.grid(row=0, column=0, columnspan=3)
+listbox_lista_obiektow.grid(row=1, column=0, columnspan=3)
+Button_pokaz_szczegoly.grid(row=2, column=0)
+Button_edytuj_obiekt.grid(row=2, column=1)
+Button_usun_obiekt.grid(row=2, column=2)
+
+# RAMKA FORMULARZ
+label_formularz = Label(ramka_formularz, text='Formularz:')
+label_imie = Label(ramka_formularz, text='Imię:')
+label_miejscowosc = Label(ramka_formularz, text='Miejscowość:')
+label_posty = Label(ramka_formularz, text='Postów:')
+
+label_formularz.grid(row=0, column=0, columnspan=2)
+label_imie.grid(row=1, column=0, sticky=W)
+label_miejscowosc.grid(row=2, column=0, sticky=W)
+label_posty.grid(row=3, column=0, sticky=W)
+
+entry_imie = Entry(ramka_formularz)
+entry_miejscowosc = Entry(ramka_formularz)
+entry_posty = Entry(ramka_formularz)
+
+entry_imie.grid(row=1, column=1)
+entry_miejscowosc.grid(row=2, column=1)
+entry_posty.grid(row=3, column=1)
+
+Button_dodaj_obiekt = Button(ramka_formularz, text='Dodaj obiekt', command=add_user)
+Button_dodaj_obiekt.grid(row=4, column=0, columnspan=2)
+
+# RAMKA SZCZEGÓŁY OBIEKTU
+label_szczegoly_obiektu = Label(ramka_szczegoly_obiektu, text='Szczegóły obiektu')
+label_imie_szczegoly_obiektu = Label(ramka_szczegoly_obiektu, text='Imię: ')
+label_imie_szczegoly_obiektu_wartosc = Label(ramka_szczegoly_obiektu, text='.....', width=10)
+label_miejscowosc_szczegoly_obiektu = Label(ramka_szczegoly_obiektu, text='Miejscowość: ')
+label_miejscowosc_szczegoly_obiektu_wartosc = Label(ramka_szczegoly_obiektu, text='.....', width=10)
+label_posty_szczegoly_obiektu = Label(ramka_szczegoly_obiektu, text='Postów: ')
+label_posty_szczegoly_obiektu_wartosc = Label(ramka_szczegoly_obiektu, text='.....', width=10)
+
+label_szczegoly_obiektu.grid(row=0, column=0, sticky=W)
+label_imie_szczegoly_obiektu.grid(row=1, column=0)
+label_imie_szczegoly_obiektu_wartosc.grid(row=1, column=1)
+label_miejscowosc_szczegoly_obiektu.grid(row=1, column=2)
+label_miejscowosc_szczegoly_obiektu_wartosc.grid(row=1, column=3)
+label_posty_szczegoly_obiektu.grid(row=1, column=4)
+label_posty_szczegoly_obiektu_wartosc.grid(row=1, column=5)
+
+# RAMKA mapa
+map_widget = tkintermapview.TkinterMapView(ramka_mapa, width=1050, height=500, corner_radius=5)
+map_widget.set_position(52.23, 21.00)
+map_widget.set_zoom(6)
+
+map_widget.grid(row=0, column=0, columnspan=7)
+
+root.mainloop()
