@@ -157,7 +157,7 @@ label_miejscowosc_szczegoly_obiektu_wartosc.grid(row=1, column=3)
 label_posty_szczegoly_obiektu.grid(row=1, column=4)
 label_posty_szczegoly_obiektu_wartosc.grid(row=1, column=5)
 
-# RAMKA MAPA
+# RAMKA mapa
 map_widget = tkintermapview.TkinterMapView(ramka_mapa, width=1050, height=500, corner_radius=5)
 map_widget.set_position(52.23, 21.00)
 map_widget.set_zoom(6)
